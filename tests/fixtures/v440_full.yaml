@@ -1,0 +1,56 @@
+template:
+  location:
+    where_to_download_data_from: https://example.com/data.xlsx
+    posix_filepath: /data/cache/study.xlsx
+    download_hyperparameters:
+      file_extension: xlsx
+      which_excel_sheet_to_use: Results
+      start_at_line_number: 2
+      end_at_line_number: 500
+
+  triple:
+    triple_subject:
+      encoding_method: column
+      value_for_encoding: A
+      mapping_hyperparameters:
+        in_this_organism: NCBITaxon:9606
+        classes_to_prioritize:
+          - biolink:Gene
+        substrings_to_remove:
+          - "(obsolete)"
+        explode_by_delimiter: ";"
+
+    triple_predicate:
+      encoding_method: value
+      value_for_encoding: biolink:gene_associated_with_condition
+
+    triple_object:
+      encoding_method: column
+      value_for_encoding: B
+      mapping_hyperparameters:
+        classes_to_prioritize:
+          - biolink:Disease
+
+  provenance:
+    publication: PMC:11708054
+    config_curator_name: Jane Doe
+    config_curator_organization: Example Institute
+
+  attributes:
+    p_value:
+      encoding_method: column
+      value_for_encoding: C
+      math_module_transformations:
+        attribute: log
+        arguments:
+          - values
+          - 10
+    sample_size:
+      encoding_method: value
+      value_for_encoding: 5000
+
+  reindexing:
+    - when: after
+      column: pval
+      comparison: lt
+      value_for_comparison: 0.05
