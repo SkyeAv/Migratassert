@@ -10,3 +10,5 @@
 *venv/
 *.log
 *.sh
+.direnv/
+result
