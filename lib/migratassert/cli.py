@@ -8,24 +8,27 @@ from migratassert.migrate import run_migration
 from migratassert.report import print_report
 
 app = typer.Typer(
-  name="migratassert",
+  name="migratassert-cli",
   help="Migrate Tablassert YAML configs from v4.4.0 to TC3 schema",
   add_completion=False,
 )
 
-
 @app.command()
 def migrate(
-  input_dir: Path = typer.Argument(
+  indir: Path = typer.Option(
     ...,
+    "-i",
+    "--indir",
     help="Directory containing v4.4.0 YAML files",
     exists=True,
     file_okay=False,
     dir_okay=True,
     readable=True,
   ),
-  output_dir: Path = typer.Argument(
+  outdir: Path = typer.Option(
     ...,
+    "-o",
+    "--outdir",
     help="Directory for migrated TC3 YAML files",
   ),
   dry_run: bool = typer.Option(
