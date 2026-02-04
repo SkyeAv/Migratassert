@@ -10,5 +10,5 @@
 *venv/
 *.log
 *.sh
-.direnv/
-result
+*.direnv/
+*.coverage
