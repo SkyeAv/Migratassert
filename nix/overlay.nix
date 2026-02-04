@@ -11,7 +11,7 @@ final: prev: {
           wheel
         ];
         propagatedBuildInputs = with pyFinal; [
-          ruamel.yaml
+          ruamel-yaml
           typer
         ];
         doCheck = false;
