@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "migratassert"
+version = "0.1.0"
+description = "Migrate Tablassert YAML configs from v4.4.0 to TC3 schema"
+requires-python = ">=3.10"
+dependencies = [
+  "typer>=0.9.0",
+  "ruamel.yaml>=0.18.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov>=4.0",
+]
+
+[project.scripts]
+migratassert = "migratassert.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["lib"]
