@@ -1,0 +1,12 @@
+*.egg-info
+*.pytest_cache/
+*__pycache__/
+*plans/
+*CLAUDE.md
+*AGENTS.md
+*.claude/
+*plan.md
+*plans/
+*venv/
+*.log
+*.sh
