@@ -6,8 +6,8 @@ Migrate Tablassert configuration YAML files from v4.4.0 schema to TC3 schema.
 
 ```bash
 # Clone repository
-git clone https://github.com/SkyeAv/MIGRATIONS.git
-cd MIGRATIONS
+git clone https://github.com/SkyeAv/Migratassert.git
+cd Migratassert
 
 # Enter development shell
 nix develop -L .
@@ -20,12 +20,12 @@ migratassert-cli --help
 
 ### Method 1: Development Shell (Recommended)
 
-Best for exploring MIGRATIONS or active development.
+Best for exploring Migratassert or active development.
 
 ```bash
 # Clone and enter development shell
 git clone https://github.com/SkyeAv/Migratassert.git
-cd MIGRATIONS
+cd Migratassert
 nix develop -L .
 
 # CLI is now available
@@ -60,7 +60,7 @@ Integrate into your own Nix flake or NixOS configuration.
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    migratassert.url = "github:SkyeAv/MIGRATIONS";
+    migratassert.url = "github:SkyeAv/Migratassert";
   };
 
   outputs = { self, nixpkgs, migratassert }: {
