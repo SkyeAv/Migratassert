@@ -2,36 +2,100 @@
 
 Migrate Tablassert configuration YAML files from v4.4.0 schema to TC3 schema.
 
-## Installation
+## Quick Start
 
 ```bash
-pip install -e .
+# Clone repository
+git clone https://github.com/SkyeAv/MIGRATIONS.git
+cd MIGRATIONS
+
+# Enter development shell
+nix develop -L .
+
+# Run CLI
+migratassert-cli --help
 ```
 
-For development:
+## Usage (With Nix)
+
+### Method 1: Development Shell (Recommended)
+
+Best for exploring MIGRATIONS or active development.
 
 ```bash
-pip install -e ".[dev]"
+# Clone and enter development shell
+git clone https://github.com/SkyeAv/MIGRATIONS.git
+cd MIGRATIONS
+nix develop -L .
+
+# CLI is now available
+migratassert-cli -i ./v440_configs/ -o ./tc3_configs/
 ```
 
-## Usage
+### Method 2: Direct Run from Flake
+
+Run without cloning or installing.
+
+```bash
+nix run github:SkyeAv/MIGRATIONS#default -- -i ./v440_configs/ -o ./tc3_configs/
+```
+
+### Method 3: User Profile Installation
+
+Install persistently to your user environment.
+
+```bash
+# Install
+nix profile install github:SkyeAv/MIGRATIONS#default
+
+# Use anywhere
+migratassert-cli -i ./v440_configs/ -o ./tc3_configs/
+```
+
+### Method 4: Use as Overlay
+
+Integrate into your own Nix flake or NixOS configuration.
+
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    migratassert.url = "github:SkyeAv/MIGRATIONS";
+  };
+
+  outputs = { self, nixpkgs, migratassert }: {
+    # Add overlay to nixpkgs
+    pkgs = import nixpkgs {
+      system = "x86_64-linux";
+      overlays = [ migratassert.overlays.default ];
+    };
+
+    # MIGRATIONS available as pkgs.python313Packages.migratassert
+    devShells.default = pkgs.mkShell {
+      packages = [ pkgs.python313Packages.migratassert ];
+    };
+  };
+}
+```
+
+## CLI Usage
 
 ### Basic Migration
 
 ```bash
-migratassert ./v440_configs/ ./tc3_configs/
+migratassert-cli -i ./v440_configs/ -o ./tc3_configs/
 ```
 
 ### Dry Run (Preview)
 
 ```bash
-migratassert --dry-run ./v440_configs/ ./tc3_configs/
+migratassert-cli -i ./v440_configs/ -o ./tc3_configs/ --dry-run
 ```
 
 ### Verbose Output
 
 ```bash
-migratassert -v ./v440_configs/ ./tc3_configs/
+migratassert-cli -i ./v440_configs/ -o ./tc3_configs/ --verbose
 ```
 
 ## Output Format
@@ -63,6 +127,7 @@ migratassert -v ./v440_configs/ ./tc3_configs/
 | `regular_expressions` | `regex` |
 | `explode_by_delimiter` | `explode_by` |
 | `value_for_comparison` | `comparator` |
+| `how_to_fill_column` | `fill` |
 
 ### New Fields
 
@@ -71,7 +136,31 @@ migratassert -v ./v440_configs/ ./tc3_configs/
 ### Dropped Fields
 
 - `when` (reindexing) - no TC3 equivalent
-- `how_to_fill_column` - no TC3 equivalent
+
+### Null Handling (New in TC3)
+
+The `fill` field specifies how to handle null values. Available strategies:
+- `"forward"` - Fill nulls with previous non-null value
+- `"backward"` - Fill nulls with next non-null value
+- `"min"` - Fill with column minimum
+- `"max"` - Fill with column maximum
+- `"mean"` - Fill with column mean
+- `"zero"` - Fill with 0
+- `"one"` - Fill with 1
+
+```yaml
+subject:
+  encoding: gene_symbol
+  fill: forward  # Propagate values down through null rows
+```
+
+```yaml
+annotations:
+  - annotation: expression_level
+    method: column
+    encoding: expression
+    fill: mean  # Replace nulls with column average
+```
 
 ## Development
 

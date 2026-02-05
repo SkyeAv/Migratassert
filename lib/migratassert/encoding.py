@@ -71,10 +71,11 @@ HYPERPARAMETER_FIELD_MAP = {
   "substrings_to_remove": "remove",
   "regular_expressions": "regex",
   "explode_by_delimiter": "explode_by",
+  "how_to_fill_column": "fill",
 }
 
 # Fields to silently drop (no TC3 equivalent)
-DROPPED_FIELDS = {"how_to_fill_column"}
+DROPPED_FIELDS = set()
 
 
 def map_node_encoding(

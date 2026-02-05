@@ -81,15 +81,25 @@ class TestMapNodeEncoding:
       {"function": "log", "arguments": ["values"]}
     ]
 
-  def test_tracks_dropped_fields(self):
+  def test_maps_how_to_fill_column_to_fill(self):
     v440 = {
       "encoding_method": "column",
       "value_for_encoding": "A",
       "mapping_hyperparameters": {
         "how_to_fill_column": "forward",
+      },
+    }
+    result = map_node_encoding(v440)
+    assert result.mapped["fill"] == "forward"
+    assert "how_to_fill_column" not in [d.split(".")[-1] for d in result.dropped]
+
+  def test_tracks_dropped_fields(self):
+    v440 = {
+      "encoding_method": "column",
+      "value_for_encoding": "A",
+      "mapping_hyperparameters": {
         "unknown_field": "value",
       },
     }
     result = map_node_encoding(v440, field_prefix="subject.")
-    assert "subject.how_to_fill_column" in result.dropped
     assert "subject.unknown_field" in result.dropped
