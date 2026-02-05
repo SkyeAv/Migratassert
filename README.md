@@ -24,7 +24,7 @@ Best for exploring MIGRATIONS or active development.
 
 ```bash
 # Clone and enter development shell
-git clone https://github.com/SkyeAv/MIGRATIONS.git
+git clone https://github.com/SkyeAv/Migratassert.git
 cd MIGRATIONS
 nix develop -L .
 
@@ -37,7 +37,7 @@ migratassert-cli -i ./v440_configs/ -o ./tc3_configs/
 Run without cloning or installing.
 
 ```bash
-nix run github:SkyeAv/MIGRATIONS#default -- -i ./v440_configs/ -o ./tc3_configs/
+nix run github:SkyeAv/Migratassert#default -- -i ./v440_configs/ -o ./tc3_configs/
 ```
 
 ### Method 3: User Profile Installation
@@ -46,7 +46,7 @@ Install persistently to your user environment.
 
 ```bash
 # Install
-nix profile install github:SkyeAv/MIGRATIONS#default
+nix profile install github:SkyeAv/Migratassert#default
 
 # Use anywhere
 migratassert-cli -i ./v440_configs/ -o ./tc3_configs/
@@ -70,7 +70,7 @@ Integrate into your own Nix flake or NixOS configuration.
       overlays = [ migratassert.overlays.default ];
     };
 
-    # MIGRATIONS available as pkgs.python313Packages.migratassert
+    # Migratassert available as pkgs.python313Packages.migratassert
     devShells.default = pkgs.mkShell {
       packages = [ pkgs.python313Packages.migratassert ];
     };
@@ -136,31 +136,6 @@ migratassert-cli -i ./v440_configs/ -o ./tc3_configs/ --verbose
 ### Dropped Fields
 
 - `when` (reindexing) - no TC3 equivalent
-
-### Null Handling (New in TC3)
-
-The `fill` field specifies how to handle null values. Available strategies:
-- `"forward"` - Fill nulls with previous non-null value
-- `"backward"` - Fill nulls with next non-null value
-- `"min"` - Fill with column minimum
-- `"max"` - Fill with column maximum
-- `"mean"` - Fill with column mean
-- `"zero"` - Fill with 0
-- `"one"` - Fill with 1
-
-```yaml
-subject:
-  encoding: gene_symbol
-  fill: forward  # Propagate values down through null rows
-```
-
-```yaml
-annotations:
-  - annotation: expression_level
-    method: column
-    encoding: expression
-    fill: mean  # Replace nulls with column average
-```
 
 ## Development
 
