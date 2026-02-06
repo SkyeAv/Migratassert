@@ -55,16 +55,16 @@ def dump_yaml(data: dict[str, Any]) -> str:
   return stream.getvalue()
 
 
-def discover_yaml_files(input_dir: Path) -> list[Path]:
+def discover_yaml_files(indir: Path) -> list[Path]:
   """Find all YAML files in directory (non-recursive).
 
   Args:
-    input_dir: Directory to search
+    indir: Directory to search
 
   Returns:
     List of YAML file paths sorted by name
   """
-  yaml_files = list(input_dir.glob("*.yaml")) + list(input_dir.glob("*.yml"))
+  yaml_files = list(indir.glob("*.yaml")) + list(indir.glob("*.yml"))
   return sorted(yaml_files, key=lambda p: p.name)
 
 
@@ -113,25 +113,25 @@ def migrate_file(
 
 
 def run_migration(
-  input_dir: Path,
-  output_dir: Path,
+  indir: Path,
+  outdir: Path,
   dry_run: bool = False,
 ) -> MigrationResult:
   """Run batch migration on all YAML files in directory.
 
   Args:
-    input_dir: Directory containing v4.4.0 files
-    output_dir: Directory for TC3 output files
+    indir: Directory containing v4.4.0 files
+    outdir: Directory for TC3 output files
     dry_run: If True, don't write files
 
   Returns:
     MigrationResult with aggregate statistics
   """
   result = MigrationResult()
-  yaml_files = discover_yaml_files(input_dir)
+  yaml_files = discover_yaml_files(indir)
 
   for source_path in yaml_files:
-    dest_path = output_dir / source_path.name
+    dest_path = outdir / source_path.name
     file_result = migrate_file(source_path, dest_path, dry_run=dry_run)
 
     result.files_processed += 1

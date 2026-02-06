@@ -47,14 +47,14 @@ def migrate(
   """Migrate Tablassert YAML configs from v4.4.0 to TC3 schema."""
   if dry_run:
     typer.echo(
-      f"DRY RUN: Would migrate files from {input_dir} to {output_dir}\n"
+      f"DRY RUN: Would migrate files from {indir} to {outdir}\n"
     )
   else:
-    output_dir.mkdir(parents=True, exist_ok=True)
+    outdir.mkdir(parents=True, exist_ok=True)
 
   result = run_migration(
-    input_dir,
-    output_dir,
+    indir,
+    outdir,
     dry_run=dry_run,
   )
 

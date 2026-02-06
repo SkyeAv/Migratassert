@@ -84,16 +84,16 @@ class TestRunMigration:
     from ruamel.yaml import YAML
     yaml = YAML()
 
-    input_dir = tmp_path / "input"
-    output_dir = tmp_path / "output"
-    input_dir.mkdir()
-    output_dir.mkdir()
+    indir = tmp_path / "input"
+    outdir = tmp_path / "output"
+    indir.mkdir()
+    outdir.mkdir()
 
     for i in range(3):
-      with open(input_dir / f"config{i}.yaml", "w") as f:
+      with open(indir / f"config{i}.yaml", "w") as f:
         yaml.dump(sample_v440_config, f)
 
-    result = run_migration(input_dir, output_dir)
+    result = run_migration(indir, outdir)
     assert result.files_processed == 3
     assert result.files_succeeded == 3
-    assert len(list(output_dir.glob("*.yaml"))) == 3
+    assert len(list(outdir.glob("*.yaml"))) == 3
