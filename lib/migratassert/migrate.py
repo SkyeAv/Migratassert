@@ -106,6 +106,7 @@ def migrate_file(
   source_path: Path,
   dest_path: Path,
   dry_run: bool = False,
+  file_stem: str | None = None,
 ) -> FileResult:
   """Migrate a single YAML file.
 
@@ -113,6 +114,7 @@ def migrate_file(
     source_path: Path to v4.4.0 YAML file
     dest_path: Path for output TC3 YAML file
     dry_run: If True, don't write output file
+    file_stem: Optional file stem for default local field generation
 
   Returns:
     FileResult with migration details
@@ -123,7 +125,7 @@ def migrate_file(
     with open(source_path) as f:
       v440_config = yaml.load(f)
 
-    result = transform_config(v440_config)
+    result = transform_config(v440_config, file_stem=file_stem)
 
     if not dry_run:
       dest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -165,8 +167,11 @@ def run_migration(
   yaml_files = discover_yaml_files(indir)
 
   for source_path in yaml_files:
-    dest_path = outdir / source_path.name
-    file_result = migrate_file(source_path, dest_path, dry_run=dry_run)
+    # Use uppercase stem for output filename (e.g., alam1.yaml -> ALAM1.yaml)
+    uppercase_stem = source_path.stem.upper()
+    dest_name = f"{uppercase_stem}{source_path.suffix}"
+    dest_path = outdir / dest_name
+    file_result = migrate_file(source_path, dest_path, dry_run=dry_run, file_stem=uppercase_stem)
 
     result.files_processed += 1
     result.file_results.append(file_result)

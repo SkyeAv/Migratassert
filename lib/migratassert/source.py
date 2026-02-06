@@ -39,12 +39,14 @@ def map_reindexing(
 def map_source(
   location: dict[str, Any],
   reindexing: list[dict[str, Any]] | None = None,
+  file_stem: str | None = None,
 ) -> MapResult:
   """Map v4.4.0 location block to TC3 source block.
 
   Args:
     location: Source location dict
     reindexing: Optional reindexing filters to include
+    file_stem: Optional file stem for default local field generation
 
   Returns:
     MapResult with TC3 source block
@@ -55,8 +57,20 @@ def map_source(
   if "where_to_download_data_from" in location:
     source["url"] = location["where_to_download_data_from"]
 
+  # Set local field: use existing posix_filepath, or generate default based on kind
   if "posix_filepath" in location:
     source["local"] = location["posix_filepath"]
+  elif file_stem:
+    # Determine the kind first to set appropriate default
+    hyper = location.get("download_hyperparameters", {})
+    ext = hyper.get("file_extension", "").lstrip(".")
+    kind = EXTENSION_TO_KIND.get(ext, "text")
+
+    # Set default local path based on kind
+    if kind == "excel":
+      source["local"] = f"./DATALAKE/{file_stem}.xlsx"
+    else:  # text kind
+      source["local"] = f"./DATALAKE/{file_stem}.csv"
 
   hyper = location.get("download_hyperparameters", {})
 

@@ -17,11 +17,12 @@ class TransformResult:
   dropped_fields: list[str] = field(default_factory=list)
 
 
-def transform_config(v440_config: dict[str, Any]) -> TransformResult:
+def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) -> TransformResult:
   """Transform a v4.4.0 config to TC3 schema.
 
   Args:
     v440_config: Parsed v4.4.0 YAML config
+    file_stem: Optional file stem for default local field generation
 
   Returns:
     TransformResult with TC3 config and list of dropped fields
@@ -35,6 +36,7 @@ def transform_config(v440_config: dict[str, Any]) -> TransformResult:
     source_result = map_source(
       template["location"],
       reindexing=template.get("reindexing"),
+      file_stem=file_stem,
     )
     tc3_template["source"] = source_result.mapped
     dropped.extend(source_result.dropped)
