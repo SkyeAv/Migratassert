@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from ruamel.yaml import YAML
+from ruamel.yaml.comments import CommentedMap, CommentedSeq
 
 from migratassert.transform import transform_config
 
@@ -33,11 +34,40 @@ class MigrationResult:
 
 
 def get_yaml() -> YAML:
-  """Get configured YAML instance with 2-space indentation."""
+  """Get configured YAML instance with 2-space indentation.
+
+  Uses sequence=4 with offset=2 to ensure list item mappings
+  align correctly (the `-` is indented 2, content is offset 2 more).
+  """
   yaml = YAML()
-  yaml.indent(mapping=2, sequence=2, offset=2)
+  yaml.indent(mapping=2, sequence=4, offset=2)
   yaml.default_flow_style = False
   return yaml
+
+
+def to_commented(data: Any, parent_key: str = "") -> Any:
+  """Convert plain Python dicts/lists to ruamel.yaml CommentedMap/CommentedSeq.
+
+  This ensures proper YAML indentation and flow style control.
+
+  Args:
+    data: Data structure to convert
+    parent_key: Key path for context (used to determine flow style)
+
+  Returns:
+    Converted data with CommentedMap/CommentedSeq for proper formatting
+  """
+  if isinstance(data, dict):
+    cm = CommentedMap()
+    for k, v in data.items():
+      cm[k] = to_commented(v, parent_key=k)
+    return cm
+  elif isinstance(data, list):
+    cs = CommentedSeq()
+    for item in data:
+      cs.append(to_commented(item, parent_key=parent_key))
+    return cs
+  return data
 
 
 def dump_yaml(data: dict[str, Any]) -> str:
@@ -51,7 +81,7 @@ def dump_yaml(data: dict[str, Any]) -> str:
   """
   yaml = get_yaml()
   stream = StringIO()
-  yaml.dump(data, stream)
+  yaml.dump(to_commented(data), stream)
   return stream.getvalue()
 
 
@@ -94,7 +124,7 @@ def migrate_file(
     if not dry_run:
       dest_path.parent.mkdir(parents=True, exist_ok=True)
       with open(dest_path, "w") as f:
-        yaml.dump(result.config, f)
+        yaml.dump(to_commented(result.config), f)
 
     return FileResult(
       source_path=source_path,
