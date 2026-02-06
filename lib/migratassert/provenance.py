@@ -1,5 +1,6 @@
 """Map provenance block to TC3 format."""
 
+from datetime import datetime
 from typing import Any
 
 from migratassert.encoding import MapResult
@@ -28,7 +29,8 @@ def map_provenance(provenance: dict[str, Any]) -> MapResult:
 
   Args:
     provenance: Source provenance dict with publication,
-      config_curator_name, config_curator_organization
+      config_curator_name, config_curator_organization,
+      config_curator_date (optional)
 
   Returns:
     MapResult with TC3 provenance block
@@ -47,8 +49,19 @@ def map_provenance(provenance: dict[str, Any]) -> MapResult:
       "kind": "curation",
       "name": provenance["config_curator_name"],
     }
+
+    # Date field is required by TC3 schema
+    if "config_curator_date" in provenance:
+      contributor["date"] = provenance["config_curator_date"]
+    else:
+      contributor["date"] = datetime.now().strftime("%d %b %Y").upper()
+
     if "config_curator_organization" in provenance:
       contributor["organizations"] = [provenance["config_curator_organization"]]
+
+    if "config_curator_comment" in provenance:
+      contributor["comment"] = provenance["config_curator_comment"]
+
     tc3_prov["contributors"] = [contributor]
 
   return MapResult(mapped=tc3_prov, dropped=dropped)

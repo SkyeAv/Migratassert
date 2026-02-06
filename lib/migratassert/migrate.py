@@ -38,10 +38,14 @@ def get_yaml() -> YAML:
 
   Uses sequence=4 with offset=2 to ensure list item mappings
   align correctly (the `-` is indented 2, content is offset 2 more).
+
+  Sets width to 4096 to prevent automatic line wrapping in string values,
+  which can cause YAML parsing issues with certain parsers.
   """
   yaml = YAML()
   yaml.indent(mapping=2, sequence=4, offset=2)
   yaml.default_flow_style = False
+  yaml.width = 4096
   return yaml
 
 

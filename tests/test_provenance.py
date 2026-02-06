@@ -1,5 +1,6 @@
 """Tests for provenance mapper."""
 
+from datetime import datetime
 import pytest
 from migratassert.provenance import map_provenance, parse_publication_curie
 
@@ -47,3 +48,33 @@ class TestMapProvenance:
     contrib = result.mapped["contributors"][0]
     assert contrib["name"] == "John Smith"
     assert "organizations" not in contrib
+
+  def test_adds_default_date_when_not_provided(self):
+    v440 = {
+      "publication": "PMC:12345",
+      "config_curator_name": "Jane Doe",
+    }
+    result = map_provenance(v440)
+    contrib = result.mapped["contributors"][0]
+    assert "date" in contrib
+    assert len(contrib["date"]) > 0
+
+  def test_uses_provided_date(self):
+    v440 = {
+      "publication": "PMID:12345",
+      "config_curator_name": "Jane Doe",
+      "config_curator_date": "09 JAN 2025",
+    }
+    result = map_provenance(v440)
+    contrib = result.mapped["contributors"][0]
+    assert contrib["date"] == "09 JAN 2025"
+
+  def test_adds_comment_when_provided(self):
+    v440 = {
+      "publication": "PMC:12345",
+      "config_curator_name": "Jane Doe",
+      "config_curator_comment": "Manual migration test",
+    }
+    result = map_provenance(v440)
+    contrib = result.mapped["contributors"][0]
+    assert contrib["comment"] == "Manual migration test"

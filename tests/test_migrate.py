@@ -33,6 +33,25 @@ class TestDumpYaml:
     assert "    kind:" in output
     assert "      " not in output.replace("    kind:", "")
 
+  def test_does_not_wrap_long_string_values(self):
+    data = {
+      "template": {
+        "annotations": [
+          {
+            "annotation": "notes",
+            "method": "value",
+            "encoding": "Correlation analysis between microbial composition and 13C-tamoxifen abundance after FDR correction"
+          }
+        ]
+      }
+    }
+    output = dump_yaml(data)
+    lines = output.split("\n")
+    encoding_lines = [line for line in lines if "encoding: Correlation analysis" in line]
+
+    assert len(encoding_lines) == 1, f"Expected single line for encoding, got {len(encoding_lines)} lines"
+    assert "encoding: Correlation analysis between microbial composition and 13C-tamoxifen abundance after FDR correction" in encoding_lines[0]
+
 
 class TestDiscoverYamlFiles:
   def test_finds_yaml_files(self, tmp_path):
