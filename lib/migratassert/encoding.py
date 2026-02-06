@@ -62,6 +62,39 @@ ENCODING_FIELD_MAP = {
   "value_for_encoding": "encoding",
 }
 
+# Method value normalization (v4.4.0 -> TC3)
+METHOD_VALUE_MAP = {
+  "column_of_values": "column",
+  "column": "column",
+  "value": "value",
+}
+
+
+def strip_biolink_prefix(value: str) -> str:
+  """Strip 'biolink:' prefix from a string value.
+
+  Args:
+    value: String that may have 'biolink:' prefix
+
+  Returns:
+    String with prefix removed
+  """
+  if isinstance(value, str) and value.startswith("biolink:"):
+    return value[8:]  # len("biolink:") == 8
+  return value
+
+
+def normalize_list_values(values: list[Any]) -> list[Any]:
+  """Strip biolink: prefix from list values.
+
+  Args:
+    values: List of values (may be strings with biolink: prefix)
+
+  Returns:
+    List with prefixes stripped from string values
+  """
+  return [strip_biolink_prefix(v) if isinstance(v, str) else v for v in values]
+
 HYPERPARAMETER_FIELD_MAP = {
   "in_this_organism": "taxon",
   "classes_to_prioritize": "prioritize",
@@ -97,7 +130,11 @@ def map_node_encoding(
 
   for old_key, new_key in ENCODING_FIELD_MAP.items():
     if old_key in v440_encoding:
-      tc3[new_key] = v440_encoding[old_key]
+      value = v440_encoding[old_key]
+      # Normalize method values (column_of_values -> column)
+      if new_key == "method" and isinstance(value, str):
+        value = METHOD_VALUE_MAP.get(value, value)
+      tc3[new_key] = value
 
   hyper = v440_encoding.get("mapping_hyperparameters", {})
   for old_key, new_key in HYPERPARAMETER_FIELD_MAP.items():
@@ -105,6 +142,9 @@ def map_node_encoding(
       value = hyper[old_key]
       if new_key == "taxon" and isinstance(value, str):
         value = extract_taxon_id(value)
+      # Strip biolink: prefix from prioritize and avoid lists
+      elif new_key in ("prioritize", "avoid") and isinstance(value, list):
+        value = normalize_list_values(value)
       tc3[new_key] = value
 
   known_hyper_fields = set(HYPERPARAMETER_FIELD_MAP.keys()) | DROPPED_FIELDS

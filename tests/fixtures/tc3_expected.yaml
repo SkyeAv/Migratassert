@@ -18,16 +18,16 @@ template:
       encoding: A
       taxon: 9606
       prioritize:
-        - biolink:Gene
+        - Gene
       remove:
         - "(obsolete)"
       explode_by: ";"
-    predicate: biolink:gene_associated_with_condition
+    predicate: gene_associated_with_condition
     object:
       method: column
       encoding: B
       prioritize:
-        - biolink:Disease
+        - Disease
   provenance:
     repo: PMC
     publication: "11708054"
@@ -37,7 +37,7 @@ template:
         organizations:
           - Example Institute
   annotations:
-    p_value:
+    - annotation: p value
       method: column
       encoding: C
       transformations:
@@ -45,6 +45,6 @@ template:
           arguments:
             - values
             - 10
-    sample_size:
+    - annotation: sample size
       method: value
       encoding: 5000

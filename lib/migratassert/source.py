@@ -73,7 +73,11 @@ def map_source(
   start = hyper.get("start_at_line_number")
   end = hyper.get("end_at_line_number")
   if start is not None or end is not None:
-    source["row_slice"] = [start, end]
+    # TC3 uses 'auto' for open-ended ranges, not null
+    source["row_slice"] = [
+      start if start is not None else 1,
+      end if end is not None else "auto",
+    ]
 
   if "use_row_numbers" in hyper:
     source["rows"] = hyper["use_row_numbers"]

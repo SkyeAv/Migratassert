@@ -62,8 +62,8 @@ class TestMapNodeEncoding:
     }
     result = map_node_encoding(v440)
     assert result.mapped["taxon"] == 9606
-    assert result.mapped["prioritize"] == ["biolink:Gene"]
-    assert result.mapped["avoid"] == ["biolink:Protein"]
+    assert result.mapped["prioritize"] == ["Gene"]  # biolink: stripped
+    assert result.mapped["avoid"] == ["Protein"]  # biolink: stripped
     assert result.mapped["prefix"] == "HGNC:"
     assert result.mapped["suffix"] == "_human"
     assert result.mapped["remove"] == ["(obsolete)"]

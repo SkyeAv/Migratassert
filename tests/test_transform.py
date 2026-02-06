@@ -51,9 +51,11 @@ class TestTransformConfig:
     assert tc3["source"]["kind"] == "text"
     assert tc3["source"]["reindex"][0]["comparator"] == 0.05
     assert tc3["statement"]["subject"]["encoding"] == "A"
-    assert tc3["statement"]["predicate"] == "biolink:related_to"
+    assert tc3["statement"]["predicate"] == "related_to"  # biolink: stripped
     assert tc3["provenance"]["repo"] == "PMC"
-    assert tc3["annotations"]["p_value"]["method"] == "column"
+    # annotations is now a list of objects with 'annotation' key
+    p_value_annot = next(a for a in tc3["annotations"] if a["annotation"] == "p value")
+    assert p_value_annot["method"] == "column"
 
   def test_preserves_sections(self):
     v440 = {

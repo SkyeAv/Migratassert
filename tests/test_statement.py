@@ -23,7 +23,7 @@ class TestMapStatement:
     result = map_statement(v440)
     assert result.mapped["subject"]["method"] == "column"
     assert result.mapped["subject"]["encoding"] == "gene"
-    assert result.mapped["predicate"] == "biolink:related_to"
+    assert result.mapped["predicate"] == "related_to"  # biolink: stripped
     assert result.mapped["object"]["method"] == "column"
     assert result.mapped["object"]["encoding"] == "disease"
 
@@ -35,7 +35,7 @@ class TestMapStatement:
       },
     }
     result = map_statement(v440)
-    assert result.mapped["predicate"] == "biolink:causes"
+    assert result.mapped["predicate"] == "causes"  # biolink: stripped
 
   def test_maps_subject_with_hyperparameters(self):
     v440 = {
@@ -55,4 +55,4 @@ class TestMapStatement:
     }
     result = map_statement(v440)
     assert result.mapped["subject"]["taxon"] == 9606
-    assert result.mapped["subject"]["prioritize"] == ["biolink:Gene"]
+    assert result.mapped["subject"]["prioritize"] == ["Gene"]  # biolink: stripped

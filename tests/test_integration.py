@@ -28,4 +28,11 @@ class TestFullTransformation:
     assert tc3["provenance"]["repo"] == expected["provenance"]["repo"]
     assert tc3["provenance"]["contributors"][0]["name"] == expected["provenance"]["contributors"][0]["name"]
 
-    assert tc3["annotations"]["p_value"]["transformations"] == expected["annotations"]["p_value"]["transformations"]
+    # annotations is now a list of objects with 'annotation' key
+    assert isinstance(tc3["annotations"], list)
+    assert len(tc3["annotations"]) == len(expected["annotations"])
+
+    # Find p_value annotation and verify transformations
+    p_val_tc3 = next(a for a in tc3["annotations"] if a["annotation"] == "p value")
+    p_val_exp = next(a for a in expected["annotations"] if a["annotation"] == "p value")
+    assert p_val_tc3["transformations"] == p_val_exp["transformations"]

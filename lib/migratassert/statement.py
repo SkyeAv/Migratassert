@@ -2,7 +2,7 @@
 
 from typing import Any
 
-from migratassert.encoding import MapResult, map_node_encoding
+from migratassert.encoding import MapResult, map_node_encoding, strip_biolink_prefix
 
 
 def map_statement(triple: dict[str, Any]) -> MapResult:
@@ -28,9 +28,11 @@ def map_statement(triple: dict[str, Any]) -> MapResult:
   if "triple_predicate" in triple:
     pred = triple["triple_predicate"]
     if isinstance(pred, dict):
-      statement["predicate"] = pred.get("value_for_encoding", "")
+      pred_value = pred.get("value_for_encoding", "")
     else:
-      statement["predicate"] = pred
+      pred_value = pred
+    # Strip biolink: prefix from predicate
+    statement["predicate"] = strip_biolink_prefix(pred_value)
 
   if "triple_object" in triple:
     obj_result = map_node_encoding(
