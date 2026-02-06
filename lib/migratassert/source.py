@@ -6,11 +6,11 @@ from migratassert.encoding import MapResult
 
 # File extension to kind mapping
 EXTENSION_TO_KIND = {
-  "xlsx": "excel",
-  "xls": "excel",
-  "csv": "text",
-  "tsv": "text",
-  "txt": "text",
+  "XLSX": "excel",
+  "XLS": "excel",
+  "CSV": "text",
+  "TSV": "text",
+  "TXT": "text",
 }
 
 
