@@ -57,7 +57,42 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
     dropped.extend(annot_result.dropped)
 
   if "sections" in template:
-    tc3_template["sections"] = template["sections"]
+    tc3_sections: list[dict[str, Any]] = []
+    for section in template["sections"]:
+      tc3_section: dict[str, Any] = {}
+
+      if "location" in section:
+        source_result = map_source(
+          section["location"],
+          reindexing=section.get("reindexing"),
+          file_stem=file_stem,
+        )
+        tc3_section["source"] = source_result.mapped
+        dropped.extend(source_result.dropped)
+
+      if "triple" in section:
+        stmt_result = map_statement(section["triple"])
+        tc3_section["statement"] = stmt_result.mapped
+        dropped.extend(stmt_result.dropped)
+
+      if "provenance" in section:
+        prov_result = map_provenance(section["provenance"])
+        tc3_section["provenance"] = prov_result.mapped
+        dropped.extend(prov_result.dropped)
+
+      if "attributes" in section:
+        annot_result = map_annotations(section["attributes"])
+        tc3_section["annotations"] = annot_result.mapped
+        dropped.extend(annot_result.dropped)
+
+      keys_requiring_transformation = {"location", "triple", "provenance", "attributes", "reindexing"}
+      for key, value in section.items():
+        if key not in keys_requiring_transformation:
+          tc3_section[key] = value
+
+      tc3_sections.append(tc3_section)
+
+    tc3_template["sections"] = tc3_sections
 
   return TransformResult(
     config={"template": tc3_template},
