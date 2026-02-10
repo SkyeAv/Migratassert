@@ -46,9 +46,10 @@ def test_sections_transform_triple_to_statement():
   assert "statement" in tc3
   assert tc3["statement"]["subject"]["encoding"] == "A"
 
-  # Sections should also be transformed
-  assert "sections" in tc3
-  section = tc3["sections"][0]
+  # Sections should be at top level (not under template)
+  assert "sections" in result.config
+  assert "sections" not in tc3
+  section = result.config["sections"][0]
 
   # Check that triple was transformed to statement
   assert "statement" in section, f"Section should have 'statement', got: {section.keys()}"
@@ -80,7 +81,7 @@ def test_sections_transform_attributes_to_annotations():
     }
   }
   result = transform_config(v440)
-  section = result.config["template"]["sections"][0]
+  section = result.config["sections"][0]
 
   # Check that attributes was transformed to annotations
   assert "annotations" in section, f"Section should have 'annotations', got: {section.keys()}"
@@ -121,7 +122,7 @@ def test_sections_with_nested_mappings():
     }
   }
   result = transform_config(v440)
-  section = result.config["template"]["sections"][0]
+  section = result.config["sections"][0]
 
   subject = section["statement"]["subject"]
   assert subject["method"] == "column"

@@ -31,6 +31,7 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
   template = v440_config.get("template", {})
 
   tc3_template: dict[str, Any] = {"syntax": "TC3"}
+  tc3_config: dict[str, Any] = {"template": tc3_template}
 
   if "location" in template:
     source_result = map_source(
@@ -92,9 +93,9 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
 
       tc3_sections.append(tc3_section)
 
-    tc3_template["sections"] = tc3_sections
+    tc3_config["sections"] = tc3_sections
 
   return TransformResult(
-    config={"template": tc3_template},
+    config=tc3_config,
     dropped_fields=dropped,
   )

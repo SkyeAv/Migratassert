@@ -69,5 +69,7 @@ class TestTransformConfig:
       }
     }
     result = transform_config(v440)
-    assert "sections" in result.config["template"]
-    assert len(result.config["template"]["sections"]) == 1
+    # Sections should be at top level, not under template
+    assert "sections" in result.config
+    assert "sections" not in result.config["template"]
+    assert len(result.config["sections"]) == 1
