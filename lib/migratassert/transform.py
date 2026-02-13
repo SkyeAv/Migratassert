@@ -57,9 +57,9 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
     tc3_template["annotations"] = annot_result.mapped
     dropped.extend(annot_result.dropped)
 
-  if "sections" in v440_config:
-    sections_source = v440_config["sections"]
-    if sections_source and sections_source != [None]:
+  # Check for sections at top level OR inside template
+  sections_source = v440_config.get("sections") or template.get("sections")
+  if sections_source and sections_source != [None]:
       tc3_sections: list[dict[str, Any]] = []
       for section in sections_source:
         tc3_section: dict[str, Any] = {}
@@ -68,7 +68,7 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
           source_result = map_source(
             section["location"],
             reindexing=section.get("reindexing"),
-            file_stem=file_stem,
+            file_stem=None,  # Don't use main file stem for sections
           )
           tc3_section["source"] = source_result.mapped
           dropped.extend(source_result.dropped)
