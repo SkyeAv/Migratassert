@@ -57,9 +57,10 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
     tc3_template["annotations"] = annot_result.mapped
     dropped.extend(annot_result.dropped)
 
-  if "sections" in template:
+  sections_source = v440_config.get("sections") or template.get("sections")
+  if sections_source:
     tc3_sections: list[dict[str, Any]] = []
-    for section in template["sections"]:
+    for section in sections_source:
       tc3_section: dict[str, Any] = {}
 
       if "location" in section:
