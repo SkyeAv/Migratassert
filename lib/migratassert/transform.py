@@ -59,7 +59,7 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
 
   if "sections" in v440_config:
     sections_source = v440_config["sections"]
-    if v440_config["sections"]:
+    if sections_source and sections_source != []:
       tc3_sections: list[dict[str, Any]] = []
       for section in sections_source:
         tc3_section: dict[str, Any] = {}
@@ -95,7 +95,7 @@ def transform_config(v440_config: dict[str, Any], file_stem: str | None = None) 
 
         tc3_sections.append(tc3_section)
 
-    tc3_config["sections"] = tc3_sections
+      tc3_config["sections"] = tc3_sections
 
   return TransformResult(
     config=tc3_config,
